@@ -78,11 +78,11 @@ public class CalendarioDAOImpl implements CalendarioDAO {
 	 * se non vi sono edizioni per quella categoria o la categoria non esiste viene ritornata una lista vuota
 	 */
 	@Override
-	public ArrayList<Edizione> select(int idCaregotia) throws SQLException{
+	public ArrayList<Edizione> select(int idCategoria) throws SQLException{
 			ArrayList<Edizione> edizioni=new ArrayList<Edizione>();
 			PreparedStatement ps=conn.prepareStatement("select * from calendario, catalogo where calendario.id_corso = catalogo.id_corso and id_categoria=?");
 
-			ps.setInt(1, idCaregotia);
+			ps.setInt(1, idCategoria);
 			ResultSet rs=ps.executeQuery();
 			while(rs.next()){
 				int idEdizione=rs.getInt("id_Edizione");
@@ -230,6 +230,7 @@ public class CalendarioDAOImpl implements CalendarioDAO {
 	 */
 	@Override
 	public ArrayList<Edizione> select(java.util.Date da, java.util.Date a) throws SQLException {
+		
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -242,7 +243,27 @@ public class CalendarioDAOImpl implements CalendarioDAO {
 	 * se non vi sono edizioni per quella categoria o la categoria non esiste viene ritornata una lista vuota
 	 */
 	@Override
-	public ArrayList<Edizione> select(int idCaregotia, boolean future) throws SQLException {
+	public ArrayList<Edizione> select(int idCategoria, boolean future) throws SQLException {
+		ArrayList<Edizione> edizioniCalendario =new ArrayList<Edizione>();
+		PreparedStatement ps=conn.prepareStatement("select * from calendario,catalogo where calendario.id_corso=catalogo.id_corso and catalogo.id_categoria=?;");
+
+		ps.setInt(1, idCategoria);
+		ResultSet rs=ps.executeQuery();
+		while (rs.next()){
+			int idEdizione=rs.getInt("id_Edizione");
+			int idCorso=rs.getInt("id_corso");
+			Date dataInizio=rs.getDate("dataInizio");
+			int durata=rs.getInt("durata");
+			String aula=rs.getString("aula");
+			String docente=rs.getString("docente");
+			Edizione ed = new Edizione(idCorso,dataInizio,durata,aula,docente);
+			
+
+			
+			
+			
+		}
+		
 		// TODO Auto-generated method stub
 		return null;
 	}
