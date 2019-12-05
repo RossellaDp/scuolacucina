@@ -19,6 +19,7 @@ public class SingletonConnection {
 	private SingletonConnection() throws ConnessioneException{
 		
 		try {
+			Class.forName("com.mysql.jdbc.Driver"); 
 			conn = DriverManager.getConnection(stringConnection,idConnection,passConnection);
 		} catch (Exception e) {
 			throw new ConnessioneException(e.getMessage());
