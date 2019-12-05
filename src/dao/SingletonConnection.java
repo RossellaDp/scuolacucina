@@ -30,7 +30,7 @@ public class SingletonConnection {
 		if(conn==null)
 			new SingletonConnection();
 		
-		return conn; 
+		return conn; //commento per commit
 	}
 
 }
