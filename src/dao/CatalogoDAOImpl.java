@@ -116,7 +116,7 @@ public class CatalogoDAOImpl implements CatalogoDAO {
 		ResultSet rs = ps.executeQuery();
 		Corso corso =null;
 		if(rs.next()){
-			
+			corso = new Corso ();
 			corso.setTitolo(rs.getString("titolo"));
 			corso.setIdCategoria(rs.getInt("id_categoria"));
 			corso.setMaxPartecipanti(rs.getInt("numeroMaxPartecipanti"));
