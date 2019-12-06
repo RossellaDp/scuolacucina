@@ -5,6 +5,7 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import entity.Edizione;
 import exceptions.ConnessioneException;
@@ -47,8 +48,15 @@ public class CalendarioDAOImpl implements CalendarioDAO {
 	@Override
 	public void delete(int idEdizione) throws SQLException{
 		// TODO Auto-generated method stub
-				
+		PreparedStatement ps = conn.prepareStatement("DELETE FROM calendario WHERE id_edizione=?");
+		ps.setInt(1, idEdizione);	
+		int n = ps.executeUpdate();
+		if(n==0)
+			throw new SQLException("edizione " + idEdizione + " non presente");
 	}
+
+				
+	
 
 
 	/*
@@ -231,9 +239,39 @@ public class CalendarioDAOImpl implements CalendarioDAO {
 	@Override
 	public ArrayList<Edizione> select(java.util.Date da, java.util.Date a) throws SQLException {
 		
-		// TODO Auto-generated method stub
-		return null;
-	}
+		 
+			ArrayList<Edizione> edizioni=new ArrayList<Edizione>();
+			PreparedStatement ps=conn.prepareStatement("select* from cucina.calendario where dataInizio between DATE(?) AND DATE(?)");
+
+			ps.setString(1, da.toString());
+			ps.setString(2, a.toString());
+			ResultSet rs=ps.executeQuery();
+			
+			while(rs.next()){
+				int idEdizione=rs.getInt("id_Edizione");
+				int idCorso=rs.getInt("id_corso");
+				Date dataInizio=rs.getDate("dataInizio");
+				int durata=rs.getInt("durata");
+				String aula=rs.getString("aula");
+				String docente=rs.getString("docente");
+
+				Edizione e=new Edizione(idCorso,dataInizio,durata,aula,docente);
+				e.setCodice(idEdizione);
+
+				long dataM = dataInizio.getTime();
+				long durataM= durata*86400000L;
+				Date dataFine = new Date(dataM+durataM);
+				java.util.Date d =  new java.util.Date();
+
+				if (dataFine.before(d) )
+					e.setTerminata(true);	
+				
+				edizioni.add(e);
+			}
+
+			return edizioni;
+		}
+	
 
 	/*
 	 * lettura di tutte le edizioni di una certa categoria, presenti nel calendario dei corsi
@@ -244,29 +282,50 @@ public class CalendarioDAOImpl implements CalendarioDAO {
 	 */
 	@Override
 	public ArrayList<Edizione> select(int idCategoria, boolean future) throws SQLException {
-		ArrayList<Edizione> edizioniCalendario =new ArrayList<Edizione>();
+		ArrayList<Edizione> edizioni =new ArrayList<Edizione>();
 		PreparedStatement ps=conn.prepareStatement("select * from calendario,catalogo where calendario.id_corso=catalogo.id_corso and catalogo.id_categoria=?;");
 
 		ps.setInt(1, idCategoria);
 		ResultSet rs=ps.executeQuery();
 		while (rs.next()){
-			int idEdizione=rs.getInt("id_Edizione");
-			int idCorso=rs.getInt("id_corso");
+			Edizione ed = new Edizione();
 			Date dataInizio=rs.getDate("dataInizio");
-			int durata=rs.getInt("durata");
-			String aula=rs.getString("aula");
-			String docente=rs.getString("docente");
-			Edizione ed = new Edizione(idCorso,dataInizio,durata,aula,docente);
 			
-
+			if (future=true) {
+				LocalDate date = LocalDate.now ();
+				LocalDate datainiziocorso= rs.getDate("dataInizio").toLocalDate();
+				Date date1 = Date.valueOf(date);
+				if (datainiziocorso.isAfter(date1.toLocalDate())) {
+				
+				ed.setIdCorso(rs.getInt("id_corso"));
+				ed.setDurata(rs.getInt("durata"));
+				ed.setDataInizio(Date.valueOf(datainiziocorso));
+				ed.setAula(rs.getString("aula"));
+				ed.setCodice(rs.getInt("idEdizione"));
+				ed.setDocente(rs.getString("docente"));
+				edizioni.add(ed);
+					 
+				 } else {
+					ed.setIdCorso(rs.getInt("id_corso"));
+					ed.setDurata(rs.getInt("durata"));
+					ed.setDataInizio(Date.valueOf(rs.getDate("dataInizio").toLocalDate()));
+					ed.setAula(rs.getString("aula"));
+					ed.setCodice(rs.getInt("idEdizione"));
+					ed.setDocente(rs.getString("docente"));
+						edizioni.add(ed);
+				
+					
+					 
+				 }
 			
-			
-			
+			}
+	
 		}
+		return edizioni;	
+}
 		
-		// TODO Auto-generated method stub
-		return null;
-	}
+		
+	
 
 	/*
 	 * lettura di tutte le edizioni presenti nel calendario dei corsi
@@ -277,8 +336,41 @@ public class CalendarioDAOImpl implements CalendarioDAO {
 	@Override
 	public ArrayList<Edizione> select(boolean future) throws SQLException {
 		// TODO Auto-generated method stub
-		return null;
-	}
+				ArrayList<Edizione> edizioni=new ArrayList<Edizione>();
+				PreparedStatement ps=null;
+				if (future) {
+				ps=conn.prepareStatement("select * from cucina.calendario where dataInizio >= curdate() AND year(dataInizio)= year(curdate())");
+				}
+				else {
+					ps=conn.prepareStatement("select* from cucina.calendario");
+				}
+				
+				ResultSet rs=ps.executeQuery();
+				while(rs.next()){
+					int idEdizione=rs.getInt("id_Edizione");
+					int idCorso=rs.getInt("id_corso");
+					Date dataInizio=rs.getDate("dataInizio");
+					int durata=rs.getInt("durata");
+					String aula=rs.getString("aula");
+					String docente=rs.getString("docente");
+
+					Edizione e=new Edizione(idCorso,dataInizio,durata,aula,docente);
+					e.setCodice(idEdizione);
+
+					long dataM = dataInizio.getTime();
+					long durataM= durata*86400000L;
+					Date dataFine = new Date(dataM+durataM);
+					java.util.Date d =  new java.util.Date();
+
+					if (dataFine.before(d) )
+						e.setTerminata(true);	
+					
+					edizioni.add(e);
+				}
+				
+
+				return edizioni;
+			}
 
 	/*
 	 * lettura di tutte le edizioni a cui è iscritto una certo utente, presenti nel calendario dei corsi
@@ -289,7 +381,42 @@ public class CalendarioDAOImpl implements CalendarioDAO {
 	 */
 	@Override
 	public ArrayList<Edizione> select(String idUtente, boolean future) throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
-	}
+		
+			ArrayList<Edizione> edizioni=new ArrayList<Edizione>();
+			PreparedStatement ps=null;
+			if (future) {
+			ps=conn.prepareStatement("select calendario.id_edizione,id_corso,id_utente,dataInizio,durata,aula,docente from calendario,iscritti where calendario.id_edizione=iscritti.id_edizione and iscritti.id_utente=? AND dataInizio >= curdate() AND year(dataInizio)= year(curdate())");
+			}
+			else {
+				ps=conn.prepareStatement("select calendario.id_edizione,id_corso,id_utente,dataInizio,durata,aula,docente from calendario,iscritti where calendario.id_edizione=iscritti.id_edizione and iscritti.id_utente=?");
+			}
+			ps.setString(1, idUtente);
+			ResultSet rs=ps.executeQuery();
+			while(rs.next()){
+				int idEdizione=rs.getInt("id_Edizione");
+				int idCorso=rs.getInt("id_corso");
+				Date dataInizio=rs.getDate("dataInizio");
+				int durata=rs.getInt("durata");
+				String aula=rs.getString("aula");
+				String docente=rs.getString("docente");
+
+				Edizione e=new Edizione(idCorso,dataInizio,durata,aula,docente);
+				e.setCodice(idEdizione);
+
+				long dataM = dataInizio.getTime();
+				long durataM= durata*86400000L;
+				Date dataFine = new Date(dataM+durataM);
+				java.util.Date d =  new java.util.Date();
+
+				if (dataFine.before(d) )
+					e.setTerminata(true);	
+				
+				edizioni.add(e);
+			}
+			
+
+			return edizioni;
+		}
+
 }
+
