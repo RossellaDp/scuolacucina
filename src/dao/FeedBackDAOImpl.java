@@ -192,6 +192,7 @@ public class FeedBackDAOImpl implements FeedbackDAO {
 			feedbackSingle.setIdFeedback(rs.getInt("id_feedback"));
 			feedbackSingle.setIdUtente(rs.getString("id_edizione"));
 			feedbackSingle.setDescrizione(rs.getString("descrizione"));
+			
 			feedback.add(feedbackSingle);
 			
 		

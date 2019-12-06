@@ -24,6 +24,7 @@ public class CatalogoDAOImpl implements CatalogoDAO {
 	/*
 	 * registrazione di un nuovo corso nel catalogo dei corsi
 	 */
+	//
 	@Override
 	public void insert(Corso corso) throws SQLException {
 		PreparedStatement ps=conn.prepareStatement("INSERT INTO catalogo(id_corso,titolo,id_categoria,numeroMaxPartecipanti,costo,descrizione) VALUES (?,?,?,?,?,?)");
