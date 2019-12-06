@@ -29,7 +29,7 @@ public class CatalogoDAOImpl implements CatalogoDAO {
 		PreparedStatement ps=conn.prepareStatement("INSERT INTO catalogo(id_corso,titolo,id_categoria,numeroMaxPartecipanti,costo,descrizione) VALUES (?,?,?,?,?,?)");
 		ps.setInt(1, corso.getCodice());
 		ps.setString(2, corso.getTitolo());
-		ps.setInt(2, corso.getCodice());
+		ps.setInt(3, corso.getCodice());
 		ps.setInt(4, corso.getMaxPartecipanti());
 		ps.setDouble(5, corso.getCosto());
 		ps.setString(6, corso.getDescrizione());
