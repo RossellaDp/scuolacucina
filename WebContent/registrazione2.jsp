@@ -11,6 +11,7 @@
 <form action="IscrizioneServlet" method="POST">
 
 <br>
+
 <b>IdUtente:</b><input placeholder ="idUtente" type = "text" name="idUtente" maxlength="30" required> <br>
 <br>
 
