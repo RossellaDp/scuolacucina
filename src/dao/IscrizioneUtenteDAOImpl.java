@@ -1,10 +1,15 @@
 package dao;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+import com.sun.xml.internal.bind.v2.schemagen.xmlschema.List;
+
+import dto.EdizioneDTO;
 import entity.Edizione;
+import entity.Feedback;
 import entity.Utente;
 import exceptions.ConnessioneException;
 
@@ -23,7 +28,48 @@ public class IscrizioneUtenteDAOImpl implements IscrizioneUtenteDAO {
 	 */
 	@Override
 	public void iscriviUtente(int idEdizione, String idUtente) throws SQLException {
-		// TODO Auto-generated method stub
+//		EdizioneDTO utentiIscritti = new EdizioneDTO ();
+//		CalendarioDAOImpl edizione;
+//		try {
+//			edizione = new CalendarioDAOImpl ();
+//		Edizione ed1 = edizione.selectEdizione(idEdizione);
+//		utentiIscritti.setEdizione(ed1);
+//		
+//		FeedBackDAOImpl feedback = new FeedBackDAOImpl ();
+//		ArrayList <Feedback> listaFeedback = feedback.selectPerEdizione(idEdizione);
+//		utentiIscritti.setFeedbacks(listaFeedback);
+//		
+		
+
+		
+		CalendarioDAOImpl utentiIscritti = null;
+		try {
+			utentiIscritti = new CalendarioDAOImpl ();
+		} catch (ConnessioneException e) {
+			
+			e.printStackTrace();
+		}
+		ArrayList <Edizione> edizioniPerUtente = utentiIscritti.select(idUtente);
+		
+		for (Edizione edizione : edizioniPerUtente) {
+			int idEdizione1 =edizione.getCodice();
+			if (idEdizione1==idEdizione) {
+				throw new SQLException("utente " + idUtente + " già iscritto al corso");
+				
+			}
+		}
+			
+	///
+		PreparedStatement ps = conn.prepareStatement("INSERT INTO iscritti (id_edizione,id_utente) values (?,?)");
+		ps.setInt(1, idEdizione);
+		ps.setString(2, idUtente);
+		int n = ps.executeUpdate();
+		if(n==0) {
+			throw new SQLException("utente " + idUtente + "edizione" + idEdizione + " non presenti nel database");	
+		
+		}
+
+		
 
 	}
 
