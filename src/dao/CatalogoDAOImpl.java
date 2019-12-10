@@ -140,6 +140,36 @@ public class CatalogoDAOImpl implements CatalogoDAO {
 
 
 }
+
+	@Override
+	public ArrayList<Corso> visualizzaCorsiPerCategoria(int idCategoria) throws SQLException {
+		ArrayList<Corso> listaCorsi = new ArrayList<Corso> ();
+		PreparedStatement ps=conn.prepareStatement("select * from catalogo where catalogo.id_categoria=?");
+		ps.setInt(1, idCategoria);
+		ResultSet rs = ps.executeQuery();
+		Corso corso = null;
+		if(rs.next()){
+			corso = new Corso ();
+			corso.setCodice(rs.getInt("id_corso"));
+			corso.setTitolo(rs.getString("titolo"));
+			corso.setIdCategoria(rs.getInt("id_categoria"));
+			corso.setMaxPartecipanti(rs.getInt("numeroMaxPartecipanti"));
+			corso.setCosto(rs.getInt("costo"));
+			corso.setDescrizione(rs.getString("descrizione"));
+			listaCorsi.add(corso);
+			
+		
+			
+
+			
+			return listaCorsi;
+		}
+	
+		else {
+			throw new SQLException("corso: " + idCategoria + " non presente");
+		
+}
+	}
 }
 
 
