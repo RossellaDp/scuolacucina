@@ -1,5 +1,6 @@
 package service;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 import dto.CorsoDTO;
@@ -15,7 +16,7 @@ public interface CorsoService {
 	ArrayList<Corso> visualizzaCorsiPerCategoria(int idCategoria) throws DAOException;
 	
 	ArrayList<Categoria> visualizzaCategorie() throws DAOException;
-	void creaNuovaCategoria(String descrizione);
+	void creaNuovaCategoria(String descrizione) throws DAOException;
 	CorsoDTO visualizzaSchedaCorso(int idCorso) throws DAOException;
 	ArrayList<Feedback> visualizzaFeedbackCorso(int idCorso) throws DAOException;
 	Corso visualizzaCorso(int idCorso) throws DAOException;

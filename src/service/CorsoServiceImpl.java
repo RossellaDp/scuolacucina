@@ -3,9 +3,13 @@ package service;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+import dao.AmministratoreDAO;
 import dao.CatalogoDAO;
 import dao.CatalogoDAOImpl;
+import dao.CategoriaDAO;
+import dao.FeedbackDAO;
 import dto.CorsoDTO;
+import dto.EdizioneDTO;
 import entity.Categoria;
 import entity.Corso;
 import entity.Feedback;
@@ -16,7 +20,9 @@ public class CorsoServiceImpl implements CorsoService {
 
 	//dichiarare qui tutti i dao di cui si ha bisogno
 	private CatalogoDAO daoC;
-	//... dichiarazione di altri DAO
+	private CategoriaDAO daoCategoria;
+	private CorsoDTO corsoDTO;
+	private FeedbackDAO feedbackDao;
 	
 	//costruire qui tutti i dao di cui si ha bisogno
 	public  CorsoServiceImpl() throws ConnessioneException{
@@ -44,8 +50,13 @@ public class CorsoServiceImpl implements CorsoService {
 	 */
 	@Override
 	public ArrayList<Corso> visualizzaCorsiPerCategoria(int idCategoria) throws DAOException {
-		// TODO Auto-generated method stub
-		return null;
+		ArrayList<Corso> listaCorsi= new ArrayList<Corso>();
+		try {
+			listaCorsi = daoC.visualizzaCorsiPerCategoria(idCategoria);
+		} catch (SQLException e) {
+			throw new DAOException("errore nel recuperare o leggere i dati", e);
+		}
+		return listaCorsi;
 	}
 	
 	/*
@@ -54,17 +65,30 @@ public class CorsoServiceImpl implements CorsoService {
 	 */
 	@Override
 	public ArrayList<Categoria> visualizzaCategorie() throws DAOException {
-		// TODO Auto-generated method stub
-		return null;
+		ArrayList<Categoria> listaCategorie = new ArrayList <Categoria> ();
+		
+		try {
+			return listaCategorie = daoCategoria.select();
+		} catch (SQLException e) {
+			throw new DAOException("errore nel recuperare o leggere i dati", e);
+		}
 	}
+		
+	
 	
 	/*
 	 * il metodo (invocabile solo da un amministratore) crea una nuova categoria
 	 * se il metodi del/dei DAO invocati sollevano una eccezione, il metodo deve tornare una DAOException con all'interno l'exception originale
 	 */
 	@Override
-	public void creaNuovaCategoria(String descrizione) {
-		// TODO Auto-generated method stub
+	public void creaNuovaCategoria(String descrizione) throws DAOException {
+		try {
+		
+			daoCategoria.insert(descrizione);
+			
+		} catch (SQLException e) {
+			throw new DAOException("errore nel recuperare o leggere i dati", e);
+		}
 
 	}
 
@@ -76,8 +100,20 @@ public class CorsoServiceImpl implements CorsoService {
 	 */
 	@Override
 	public CorsoDTO visualizzaSchedaCorso(int idCorso) throws DAOException {
-		// TODO Auto-generated method stub
-		return null;
+		CorsoDTO corsoScheda = new CorsoDTO ();
+		try {
+			
+			Corso corso = daoC.select(idCorso);
+		    corsoDTO.setCorso(corso);
+		    corsoDTO.getCorso();
+		    
+		 		  //EdizioneDTO edizione = edizione. non capisco come utilizzare il DTO
+		
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return corsoScheda;
 	}
 
 	/*
@@ -87,17 +123,26 @@ public class CorsoServiceImpl implements CorsoService {
 	 */
 	@Override
 	public ArrayList<Feedback> visualizzaFeedbackCorso(int idCorso) throws DAOException {
-		// TODO Auto-generated method stub
-		return null;
+      ArrayList<Feedback> listaFeedback = new ArrayList <Feedback> ();
+		
+		try {
+		 listaFeedback = feedbackDao.selectFeedbackPerCorso(idCorso);
+		 return listaFeedback;
+		} catch (SQLException e) {
+			throw new DAOException("errore nel recuperare o leggere i dati", e);
+		}
 	}
-
 	/*
 	 * modifica tutti i dati di un corso
 	 * se il metodi del/dei DAO invocati sollevano una eccezione, il metodo deve tornare una DAOException con all'interno l'exception originale
 	 */
 	@Override
 	public void modificaDatiCorso(Corso corso) throws DAOException {
-		// TODO Auto-generated method stub
+		try {
+			daoC.update(corso);
+		} catch (SQLException e) {
+			throw new DAOException("errore nel recuperare o leggere i dati", e);
+		}
 
 	}
 
@@ -107,7 +152,11 @@ public class CorsoServiceImpl implements CorsoService {
 	 */
 	@Override
 	public void inserisciCorso(Corso corso) throws DAOException {
-		// TODO Auto-generated method stub
+		try {
+			daoC.insert(corso);
+		} catch (SQLException e) {
+			throw new DAOException("errore nel recuperare o leggere i dati", e);
+		}
 
 	}
 
@@ -117,7 +166,11 @@ public class CorsoServiceImpl implements CorsoService {
 	 */ 
 	@Override
 	public void cancellaCorso(int codiceCorso) throws DAOException {
-		// TODO Auto-generated method stub
+		try {
+			daoC.delete(codiceCorso);
+		} catch (SQLException e) {
+			throw new DAOException("errore nel recuperare o leggere i dati", e);
+		}
 
 	}
 
@@ -127,8 +180,14 @@ public class CorsoServiceImpl implements CorsoService {
 	 */
 	@Override
 	public Corso visualizzaCorso(int codiceCorso) throws DAOException {
-		// TODO Auto-generated method stub
-		return null;
+		try {
+			Corso corso = daoC.select(codiceCorso);
+			return corso;
+		} catch (SQLException e) {
+			throw new DAOException("errore nel recuperare o leggere i dati", e);
+		}
+		
+		
 	}
 
 }
