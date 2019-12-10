@@ -4,9 +4,12 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 import dao.AmministratoreDAO;
+import dao.CalendarioDAOImpl;
 import dao.CatalogoDAO;
 import dao.CatalogoDAOImpl;
 import dao.CategoriaDAO;
+import dao.CategoriaDAOImpl;
+import dao.FeedBackDAOImpl;
 import dao.FeedbackDAO;
 import dto.CorsoDTO;
 import dto.EdizioneDTO;
@@ -25,8 +28,12 @@ public class CorsoServiceImpl implements CorsoService {
 	private FeedbackDAO feedbackDao;
 	
 	//costruire qui tutti i dao di cui si ha bisogno
+
 	public  CorsoServiceImpl() throws ConnessioneException{
 		daoC = new CatalogoDAOImpl();
+		daoCategoria = new CategoriaDAOImpl ();
+		corsoDTO = new CorsoDTO ();
+		feedbackDao = new FeedBackDAOImpl ();
 		//... costruzione dei altri dao
 	}
 	
